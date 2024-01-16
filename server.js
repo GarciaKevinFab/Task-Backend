@@ -33,7 +33,17 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/users', userRoute);
-app.use('/api/v1/tasks', taskRoutes);
+app.use('/api/v1/tasks', (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.split(' ')[1];
+        // Aquí iría la lógica para validar el token
+        next();
+    } else {
+        res.status(401).json({ message: "No autorizado" });
+    }
+}, taskRoutes);
+
 
 
 
